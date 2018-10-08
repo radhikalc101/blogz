@@ -5,11 +5,13 @@
     <form action="/newpost" method='post'>
         <div class='leftDownSpacing'>
             <label> Title for your new blog:</label>       
-            <input type="text" name='title' /><!--name=task-->
+            <input type="text" name='title' />
+            <div class="error">{{titileMessage}}</div>
         </div>
         <div class='leftDownSpacing'>
             <lable>Your new blog:</lable>
-            <textarea name="body"></textarea><!--name='text'-->
+            <textarea name="body"></textarea>
+            <div class="error">{{bodyMessage}}</div>
         </div>
         <div class='button'>
             <input type="submit" value='Add Entry' />

@@ -6,6 +6,7 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:beprotective@localhost:8889/build-a-blog'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+app.secret_key = 'EakyJe4LYRecryCLMQAqiqiT'
 
 #creating table in databate through python 
 class Blog(db.Model):
@@ -23,17 +24,24 @@ def newpost():
     if request.method == 'POST': 
         title = request.form['title']
         body = request.form['body']
-
-        if (title == "" or body == ""):
-            #flash('Please enter the title', 'Please enter the body')
-            return redirect('/newpost')
+        titleError = ""
+        bodyError =""
+        if title == "" or body == "":
+            if title == "":
+                titleError = 'Please enter the title'
+                flash(titleError, 'error')
+            if body == "":
+                bodyError='Please enter the body'
+                flash(bodyError, 'error')
+            return render_template('newpost.html',titileMessage=titleError, bodyMessage=bodyError)
         else:
             newBlog = Blog(title, body)
             db.session.add(newBlog)
             db.session.commit()
-            return redirect("/blog?id=" + str(newBlog.id))
+            url = "/blog?id=" + str(newBlog.id) 
+            return redirect(url)
     else:
-        return render_template('newpost.html') 
+        return render_template('newpost.html',titileMessage="", bodyMessage="") 
 
 
 @app.route('/blog')

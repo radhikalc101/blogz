@@ -10,13 +10,13 @@
         <a href="/blog" class="leftMargin">Main Blog Page</a> 
         <a href="/newpost" class="leftMargin">Add New Blog Entry</a> 
     </nav>
-    {% with messages = get_flashed_messages(with_categories=True) %}
+    <!-- {% with messages = get_flashed_messages(with_categories=True) %}
         <ul>
         {% for category,message in messages %}
             <li class="{{category}}">{{message}}</li>
         {% endfor %}
         </ul>
-    {% endwith %}           
+    {% endwith %}            -->
 
     {% block content %}
     {% endblock %}
