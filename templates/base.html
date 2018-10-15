@@ -7,9 +7,17 @@
     </head>
 <body>
      <nav>
-        <a href="/blog" class="leftMargin">Main Blog Page</a> 
-        <a href="/newpost" class="leftMargin">Add New Blog Entry</a> 
+        <div>
+            <a href="/" >home</a> 
+            <a href="/all-blogs">all posts</a> 
+            <a href="/login">new post</a> 
+        </div>
+        <div style="float:right">
+            <a href='/login'>login</a>
+            <a href='/logout'>logout</a>
+        </div>
     </nav>
+    
     <!-- {% with messages = get_flashed_messages(with_categories=True) %}
         <ul>
         {% for category,message in messages %}

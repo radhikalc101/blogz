@@ -9,7 +9,7 @@
             <div>
                 <h2><a href="/blog?id={{blog.id}}">{{blog.title}}</a></h2>
                 <p>{{blog.body}}</p>
-                <hr />
+                <p>writen by <a href="/all-blogs?user={{blog.owner_id}}">{{users[blog.owner_id].username}}</a></p>
             </div>
             {% endfor %}
         {% endif %}

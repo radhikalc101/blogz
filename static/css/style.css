@@ -22,6 +22,7 @@ textarea {
     height:80px;
 }
 .leftMargin {
+    text-align: center;
     margin-left: 20px;
 }
 .Ntitle{
@@ -30,6 +31,11 @@ textarea {
 }
 .error{
     color:red;
-    margin-bottom: 60px;
-    
+    margin-bottom: 0px;   
+}
+.floatRight{
+    float:right;
+}
+.floatLeft{
+    float:left;
 }
