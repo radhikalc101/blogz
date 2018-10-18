@@ -30,34 +30,28 @@ class User(db.Model):
     blogs = db.relationship('Blog', backref='owner')
 
 
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
+def __init__(self, username, password):
+    self.username = username
+    self.password = password
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        print(username)
-        print(password)
         errorMessage=''
         if username == '' or password == '':
             errorMessage = "User Name and/or Password can not be empty"
             return render_template('login.html',errorMessage=errorMessage)
         else:    
             user = User.query.filter_by(username=username).first()
-            print(user.id)
-            print(user.username)
-            print(user.password)
             if user and user.password == password:
-                print('valid user')
+                session['username'] = username
                 return redirect('/newpost')  
             else:
-                print('no user found')
                 errorMessage = "Invalid user/password"
                 return render_template('login.html',errorMessage=errorMessage)
-    else:  
+    else:     
         return render_template('login.html', errorMessage='')
 
 
@@ -106,7 +100,7 @@ def signup():
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def newpost():
-    #owner = User.query.filter_by(session['username'] = username).first()
+    #owner = User.query.filter_by(username=session['username']).first()
 
     if request.method == 'POST': 
         title = request.form['title']
@@ -116,10 +110,8 @@ def newpost():
         if title == "" or body == "":
             if title == "":
                 titleError = 'Please enter the title'
-                flash(titleError, 'error')
             if body == "":
                 bodyError='Please enter the body'
-                flash(bodyError, 'error')
             return render_template('newpost.html',titileMessage=titleError, bodyMessage=bodyError)
         else:
             #newBlog = Blog(title, body,owner)
@@ -129,8 +121,10 @@ def newpost():
             db.session.commit() 
             #return redirect("/blog?user=" + user.username)           
             return redirect("/blog?id=" + str(newBlog.id))
-    else:
+    elif 'username' in session:
         return render_template('newpost.html',titileMessage="", bodyMessage="") 
+    else:
+        return redirect('/login')  
 
 @app.route("/logout")
 def logout():
@@ -145,7 +139,7 @@ def blogs():
     if userId:
         user = User.query.filter_by(id=userId).first()
         blogs = Blog.query.filter_by(owner_id=user.id)
-        return render_template('singleUser.html',blogs=blogs,user=user,title="blog posts!")
+        return render_template('singleUser.html',blogs=blogs,user=user,title="Blog Posts!")
     else :
         blogs = Blog.query.all()
         users = {}
@@ -156,7 +150,7 @@ def blogs():
 
         #users['1'] = User{id='1', username='Rishi',password='', blogs=[]}
         #users['2'] = User{id='2', username='Teju',password='', blogs=[]}
-        return render_template('blog.html',blogs=blogs,users=users, title="blog posts!")#,user=user)
+        return render_template('blog.html',blogs=blogs,users=users, title="Blog Posts!")#,user=user)
 
 @app.route('/blog')
 def blog():
@@ -165,12 +159,12 @@ def blog():
     blog = Blog.query.filter_by(id=blogId).first()
     blogUser = User.query.filter_by(id=blog.owner_id).first()
 
-    return render_template('view_blog.html',blog=blog, user=blogUser, title="blog posts!")
+    return render_template('view_blog.html',blog=blog, user=blogUser, title="Blog Posts!")
 
 @app.before_request
 def require_login():
     #print('inside before request')
-    allowed_routes = ['login','signup','all-blogs','newpost','index']
+    allowed_routes = ['login','signup','all-blogs','index','static']
     if request.endpoint not in allowed_routes and 'username' not in session:
     #if not ('user' in session or request.endpoint in allowed_route):
         return redirect('/login')
@@ -178,24 +172,6 @@ def require_login():
 
 @app.route("/")
 def index():
-
-
-    # errors = {}
-    # errors['username'] = request.args.get("usernameError")
-    # errors['password'] = request.args.get("passwordError")
-    # errors['verifypassword'] = request.args.get("verifypasswordError")
-    
-    # if errors['username'] == None:
-    #     errors['username'] = ""
-    # if errors['password'] == None:
-    #     errors['password'] = ""
-    # if errors['verifypassword'] == None:
-    #     errors['verifypassword'] = ""
-    
-
-    # username = request.args.get("username")
-    # if username == None:
-    #     username = ""
     
     all_users = User.query.all()
     print(all_users)

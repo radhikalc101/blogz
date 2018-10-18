@@ -1,17 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>blog posts!</h2>
+    <h2>{{user.username.capitalize()}}'s posts!</h2>
 
-<div>
-    {% for blog in blogs %}
-        <h3><a href="/blog?id={{blog.id}}">{{blog.title}}</a></h3>
-        <p>{{blog.body}}</p>
-        <p>writen by <a href="/all-blogs?user={{user.id}}">{{user.username}}</a></p>
-        <hr />
-    {% endfor %}
-</div>
-
-
+    <div>
+        {% for blog in blogs %}
+            <h3><a href="/blog?id={{blog.id}}">{{blog.title}}</a></h3>
+            <p>{{blog.body}}</p>
+            <p>Writen by <a href="/all-blogs?user={{user.id}}">{{user.username.capitalize()}}</a></p>
+            <hr />
+        {% endfor %}
+    </div>
 
 {% endblock %}

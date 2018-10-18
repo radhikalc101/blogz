@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2 class="Ntitle">{{ blog.title }}</h2> 
+    <h2 class="title">{{ blog.title }}</h2> 
 
-<strong>{{ blog.body}}</strong> 
+    <strong>{{ blog.body}}</strong> 
 
-<p>writen by <a href="/all-blogs?user={{user.id}}">{{user.username}}</a></p>
+    <p>Writen by <a href="/all-blogs?user={{user.id}}">{{user.username.capitalize()}}</a></p>
 
 
 {% endblock %}

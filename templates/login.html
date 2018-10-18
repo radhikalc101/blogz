@@ -1,24 +1,23 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1>Log in </h1>
-<div class="error">{{errorMessage}}</div>
-<form action="/login" method="post">
-    <table>
-        <tr>
-            <td><label for="Username">Email</label></td>
-            <td>
-                <input name="username" type="text" >
-            </td>
-        </tr>
-        <tr>
-            <td><label for="password">Password</label></td>
-            <td>
-                <input name="password" type="password">
-            </td>
-        </tr>
-    </table>
-    <input type="submit" value="Submit">
-</form>
-<p>If you don't have an account, you may <a href="/signup">create one!</a></p>
+    <h1>Log In </h1>
+    <div class="error">{{errorMessage}}</div>
+    <form action="/login" method="post">
+        <table>
+            <tr>
+                <td><label for="Username">Email</label></td>
+                <td>
+                    <input name="username" type="text" >
+                </td>
+            </tr>
+            <tr>
+                <td><label for="password">Password</label></td>
+                <td>
+                    <input name="password" type="password">
+                </td>
+            </tr>
+        </table>
+        <input type="submit" class="btn btn-info" value="Submit">
+    </form>
+    <p>If you don't have an account, you may <a href="/signup">create one!</a></p>
 {% endblock %}
