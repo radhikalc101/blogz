@@ -7,26 +7,26 @@
         <title class='title'>{{title}}</title>
     </head>
     <body style="margin-left: 20%;margin-right: 20%">
-            <nav class="navbar navbar-inverse">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="/">Blogz</a>
-                    </div>
-                    <ul class="nav navbar-nav">
-                        <li class="active"><a href="/">Home</a></li>
-                        <li><a href="/all-blogs" >All Posts</a></li>
-                        <li><a href="/newpost">New Post</a></li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        {% if 'username' in session %}
-                            <li><a href="/all-blogs"><span class="glyphicon glyphicon-user"></span>{{session['username'].capitalize()}}</a></li>
-                            <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-                        {% else %}
-                            <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                        {% endif %}
-                    </ul>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">Blogz</a>
                 </div>
-            </nav>
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">Home</a></li>
+                    <li><a href="/allBlogs">All Posts</a></li>
+                    <li><a href="/newpost">New Post</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if 'username' in session %}
+                        <li><a href="/allBlogs"><span class="glyphicon glyphicon-user"></span>Username: {{session['username'].capitalize()}}</a></li>
+                        <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    {% else %}
+                        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
 
         {% block content %}
         {% endblock %}

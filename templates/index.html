@@ -3,6 +3,6 @@
 
     <h2>Blog Users</h2>
     {% for user in users %}
-        <div><a href="/all-blogs?user={{user.id}}">{{user.username.capitalize()}}</a></div>
+        <div><a href="/allBlogs?user={{user.id}}">{{user.username.capitalize()}}</a></div>
     {% endfor %}
 {% endblock %}

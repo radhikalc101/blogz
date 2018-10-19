@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, render_template,flash,session
 from flask_sqlalchemy import SQLAlchemy
+from hashutils import make_pw_hash, check_pw_hash
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -26,13 +27,13 @@ class Blog(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True)
-    password = db.Column(db.String(120))
+    pw_hash = db.Column(db.String(120))
     blogs = db.relationship('Blog', backref='owner')
 
 
-def __init__(self, username, password):
-    self.username = username
-    self.password = password
+    def __init__(self, username, password):
+        self.username = username
+        self.pw_hash = make_pw_hash(password)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -45,7 +46,7 @@ def login():
             return render_template('login.html',errorMessage=errorMessage)
         else:    
             user = User.query.filter_by(username=username).first()
-            if user and user.password == password:
+            if user and check_pw_hash(password, user.pw_hash):
                 session['username'] = username
                 return redirect('/newpost')  
             else:
@@ -129,28 +130,31 @@ def newpost():
 @app.route("/logout")
 def logout():
     del session['username']
-    return redirect("/all-blogs")
+    return redirect("/allBlogs")
     
-
-@app.route('/all-blogs')
+@app.route('/allBlogs')
 def blogs():
     blogs = []
     userId = request.args.get('user')
     if userId:
+        #print("userid..."+str(userId))
         user = User.query.filter_by(id=userId).first()
         blogs = Blog.query.filter_by(owner_id=user.id)
         return render_template('singleUser.html',blogs=blogs,user=user,title="Blog Posts!")
     else :
         blogs = Blog.query.all()
+       
         users = {}
         for blog in blogs:
             if not users.get(blog.owner_id):
                 user = User.query.filter_by(id=blog.owner_id).first()
                 users[user.id] = user
-
+        #print("BLOGS and USERS.....")
+        #print(blogs)
+        #print(users)
         #users['1'] = User{id='1', username='Rishi',password='', blogs=[]}
         #users['2'] = User{id='2', username='Teju',password='', blogs=[]}
-        return render_template('blog.html',blogs=blogs,users=users, title="Blog Posts!")#,user=user)
+        return render_template('blog.html',blogs=blogs,users=users, title="Blog Posts!")
 
 @app.route('/blog')
 def blog():
@@ -163,10 +167,9 @@ def blog():
 
 @app.before_request
 def require_login():
-    #print('inside before request')
-    allowed_routes = ['login','signup','all-blogs','index','static']
+    print('inside before request..'+request.endpoint)
+    allowed_routes = ['login','signup','blogs','index','static','blog']
     if request.endpoint not in allowed_routes and 'username' not in session:
-    #if not ('user' in session or request.endpoint in allowed_route):
         return redirect('/login')
 
 
