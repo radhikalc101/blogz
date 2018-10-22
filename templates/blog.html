@@ -9,10 +9,24 @@
             <div>
                 <h2><a href="/blog?id={{blog.id}}">{{blog.title}}</a></h2>
                 <p>{{blog.body}}</p>
-                <p>Writen by <a href="/allBlogs?user={{blog.owner_id}}">{{users[blog.owner_id].username.capitalize()}}</a></p>
+                <p>Writen by <a href="/allBlogs?page=1&user={{blog.owner_id}}">{{users[blog.owner_id].username.capitalize()}}</a></p>
                 <hr/>
             </div>
             {% endfor %}
+            <div style="width: 100%;">
+                {% if prev_url %}
+                    <a style="float: right" href="{{ prev_url }}">
+                        Newer blogs
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                    </a>
+                {% endif %}
+                {% if next_url %}
+                    <a href="{{ next_url }}">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true">
+                        Older blogs
+                    </a>
+                {% endif %}
+            </div>
         {% endif %}
 
     <hr />

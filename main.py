@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template,flash,session
+from flask import Flask, request, redirect, render_template,flash,session,url_for
 from flask_sqlalchemy import SQLAlchemy
 from hashutils import make_pw_hash, check_pw_hash
 
@@ -6,6 +6,7 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:radhikablogz@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
+app.config['BLOGS_PER_PAGE'] = 2
 db = SQLAlchemy(app)
 app.secret_key = 'EakyJe4LYRecryCLMQAqiqiT'
 
@@ -133,28 +134,47 @@ def logout():
     return redirect("/allBlogs")
     
 @app.route('/allBlogs')
-def blogs():
+def allBlogs():
     blogs = []
     userId = request.args.get('user')
+    page = request.args.get('page', 1, type=int)
     if userId:
         #print("userid..."+str(userId))
         user = User.query.filter_by(id=userId).first()
-        blogs = Blog.query.filter_by(owner_id=user.id)
-        return render_template('singleUser.html',blogs=blogs,user=user,title="Blog Posts!")
+        #blogs = Blog.query.filter_by(owner_id=user.id)
+        blogPagenator = Blog.query.filter_by(owner_id=user.id).order_by(Blog.title).paginate(
+        page, app.config['BLOGS_PER_PAGE'], False)
+        next_url = url_for('allBlogs', page=blogPagenator.next_num, user=user.id) \
+            if blogPagenator.has_next else None
+        prev_url = url_for('allBlogs', page=blogPagenator.prev_num, user=user.id) \
+            if blogPagenator.has_prev else None
+        #return render_template('singleUser.html',blogs=blogs,user=user,title="Blog Posts!")
     else :
-        blogs = Blog.query.all()
-       
-        users = {}
-        for blog in blogs:
-            if not users.get(blog.owner_id):
-                user = User.query.filter_by(id=blog.owner_id).first()
-                users[user.id] = user
-        #print("BLOGS and USERS.....")
-        #print(blogs)
-        #print(users)
-        #users['1'] = User{id='1', username='Rishi',password='', blogs=[]}
-        #users['2'] = User{id='2', username='Teju',password='', blogs=[]}
-        return render_template('blog.html',blogs=blogs,users=users, title="Blog Posts!")
+        blogPagenator = Blog.query.order_by(Blog.title).paginate(
+        page, app.config['BLOGS_PER_PAGE'], False)
+        next_url = url_for('allBlogs', page=blogPagenator.next_num) \
+            if blogPagenator.has_next else None
+        prev_url = url_for('allBlogs', page=blogPagenator.prev_num) \
+            if blogPagenator.has_prev else None
+    users = {}    
+    for blog in blogPagenator.items:
+        if not users.get(blog.owner_id):
+            user = User.query.filter_by(id=blog.owner_id).first()
+            users[user.id] = user    
+    return render_template("blog.html", title="Blog Posts!", blogs=blogPagenator.items, users=users,
+                        next_url=next_url, prev_url=prev_url)   
+        # blogs = Blog.query.all()
+        # users = {}
+        # for blog in blogs:
+        #     if not users.get(blog.owner_id):
+        #         user = User.query.filter_by(id=blog.owner_id).first()
+        #         users[user.id] = user
+                #print("BLOGS and USERS.....")
+                #print(blogs)
+                #print(users)
+                #users['1'] = User{id='1', username='Rishi',password='', blogs=[]}
+                #users['2'] = User{id='2', username='Teju',password='', blogs=[]}
+        # return render_template('blog.html',blogs=blogs,users=users, title="Blog Posts!")
 
 @app.route('/blog')
 def blog():
@@ -168,7 +188,7 @@ def blog():
 @app.before_request
 def require_login():
     print('inside before request..'+request.endpoint)
-    allowed_routes = ['login','signup','blogs','index','static','blog']
+    allowed_routes = ['login','signup','allBlogs','index','static','blog']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
